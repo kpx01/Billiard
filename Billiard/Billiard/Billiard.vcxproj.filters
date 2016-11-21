@@ -11,7 +11,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="SceneInterface.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Ball.h" />
   </ItemGroup>

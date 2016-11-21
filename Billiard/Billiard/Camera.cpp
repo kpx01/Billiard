@@ -4,8 +4,6 @@
 using namespace DirectX;
 using namespace SimpleMath;
 
-using Microsoft::WRL::ComPtr;
-
 Camera::Camera():
 	m_CameraPosition(0.f, 0.f, 0.f),
 	m_CameraLookAt(0.f, 0.f, 0.f),
@@ -21,7 +19,7 @@ void Camera::Update() {
 	Vector3 direction;
 	Vector3 crossDirection;
 	direction = m_CameraLookAt - m_CameraPosition;
-
+	
 	if (GetAsyncKeyState(VK_RIGHT)) {
 		direction.Cross(m_CameraUp, crossDirection);
 		crossDirection.Normalize();
@@ -33,16 +31,10 @@ void Camera::Update() {
 		m_CameraPosition += crossDirection;
 	}
 	else if (GetAsyncKeyState(VK_UP)) {
-		//direction.Cross(m_CameraUp.Left, crossDirection);
-		//crossDirection.Normalize();
-		//m_CameraPosition += crossDirection;
 		direction.Normalize();
 		m_CameraPosition += direction;
 	}
 	else if (GetAsyncKeyState(VK_DOWN)) {
-		//direction.Cross(m_CameraUp.Left, crossDirection);
-		//crossDirection.Normalize();
-		//m_CameraPosition -= crossDirection;
 		direction.Normalize();
 		m_CameraPosition -= direction;
 	}

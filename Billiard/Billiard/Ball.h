@@ -3,10 +3,21 @@
 using namespace DirectX;
 using namespace SimpleMath;
 
-class Ball
+__declspec(align(16)) class Ball
 {
 public:
 	Ball();
+	~Ball() {}
+
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
 	void Initialize(Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<ID3D11DeviceContext>);
 	void Update(float elapsedTime);
 	void Render(XMMATRIX&, XMMATRIX&, XMMATRIX&);
@@ -15,7 +26,7 @@ public:
 	Vector3 GetPosition();
 
 private:
-	std::unique_ptr<GeometricPrimitive>	m_Shape;
+	std::unique_ptr<GeometricPrimitive>	m_Shape = nullptr;
 
 	Vector3	m_pos;
 	Vector3	m_velocity;

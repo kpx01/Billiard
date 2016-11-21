@@ -47,22 +47,22 @@ private:
 	void OnDeviceLost();
 
 	// Device resources.
-	HWND                                            m_window;
-	int                                             m_outputWidth;
-	int                                             m_outputHeight;
+	HWND                                            m_window = nullptr;
+	int                                             m_outputWidth = 800;
+	int                                             m_outputHeight = 600;
 
-	D3D_FEATURE_LEVEL                               m_featureLevel;
-	Microsoft::WRL::ComPtr<ID3D11Device>            m_d3dDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>     m_d3dContext;
+	D3D_FEATURE_LEVEL                               m_featureLevel = D3D_FEATURE_LEVEL_11_1;
+	Microsoft::WRL::ComPtr<ID3D11Device>            m_d3dDevice = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>     m_d3dContext = nullptr;
 
-	Microsoft::WRL::ComPtr<IDXGISwapChain>          m_swapChain;
-	Microsoft::WRL::ComPtr<IDXGISwapChain1>         m_swapChain1;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D>			m_pDepthStencil;
+	Microsoft::WRL::ComPtr<IDXGISwapChain>          m_swapChain = nullptr;
+	Microsoft::WRL::ComPtr<IDXGISwapChain1>         m_swapChain1 = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D>			m_pDepthStencil = nullptr;
 
 	// Rendering loop timer.
 	DX::StepTimer                                   m_timer;
 
-	GameScene									m_Scene;
+	std::unique_ptr<GameScene>						m_Scene = nullptr;
 };

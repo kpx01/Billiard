@@ -1,11 +1,26 @@
+//
+//	Camera.h
+//
 #pragma once
 
 using namespace DirectX;
 using namespace SimpleMath;
 
-class Camera {
+__declspec(align(16)) class Camera {
 public:
 	Camera();
+	~Camera(){}
+
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
+
 	void Initialize();
 	void Update();
 	void SetCameraPosition(Vector3);

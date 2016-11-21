@@ -24,6 +24,8 @@ void Game::Initialize(HWND window, int width, int height)
 	m_outputWidth = std::max(width, 1);
 	m_outputHeight = std::max(height, 1);
 
+	m_Scene = std::make_unique<GameScene>();
+
 	CreateDevice();
 	CreateResources();
 
@@ -47,8 +49,7 @@ void Game::Update(DX::StepTimer const& timer)
 {
 	float elapsedTime = float(timer.GetElapsedSeconds());
 
-	// TODO: Add your game logic here.
-	m_Scene.Update(elapsedTime);
+	m_Scene->Update(elapsedTime);
 }
 
 // Draws the scene.
@@ -75,7 +76,7 @@ void Game::Render()
 	//m_Font->DrawString(m_Sprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
 	//m_Sprites->End();
 
-	m_Scene.Draw();
+	m_Scene->Draw();
 
 	Present();
 }
@@ -252,7 +253,7 @@ void Game::CreateDevice()
 	vp.TopLeftY = 0;
 	m_d3dContext->RSSetViewports(1, &vp);
 
-	m_Scene.Initialize(m_d3dDevice, m_d3dContext);
+	m_Scene->Initialize(m_d3dDevice, m_d3dContext);
 }
 
 void Game::CreateResources()
@@ -367,7 +368,8 @@ void Game::OnDeviceLost()
 {
 	// TODO
 	//m_object.Clear();
-	m_Scene.Unload();
+	m_Scene->Unload();
+	m_Scene.release();
 
 	// TODO: Add Direct3D resource cleanup here.
 	//m_pBatchInputLayout.Reset();
