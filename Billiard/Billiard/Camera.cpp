@@ -4,6 +4,8 @@
 using namespace DirectX;
 using namespace SimpleMath;
 
+using Microsoft::WRL::ComPtr;
+
 Camera::Camera():
 	m_CameraPosition(0.f, 0.f, 0.f),
 	m_CameraLookAt(0.f, 0.f, 0.f),
@@ -19,43 +21,76 @@ void Camera::Update() {
 	Vector3 direction;
 	Vector3 crossDirection;
 	direction = m_CameraLookAt - m_CameraPosition;
-	
+	direction.Normalize();
+
 	if (GetAsyncKeyState(VK_RIGHT)) {
 		direction.Cross(m_CameraUp, crossDirection);
 		crossDirection.Normalize();
-		m_CameraPosition -= crossDirection;
+		m_CameraPosition -= crossDirection * 2.f;
+		m_CameraPosition += direction * 0.05f;
 	}
 	else if (GetAsyncKeyState(VK_LEFT)) {
 		direction.Cross(m_CameraUp, crossDirection);
 		crossDirection.Normalize();
-		m_CameraPosition += crossDirection;
+		m_CameraPosition += crossDirection * 2.f;
+		m_CameraPosition += direction * 0.05f;
 	}
 	else if (GetAsyncKeyState(VK_UP)) {
-		direction.Normalize();
-		m_CameraPosition += direction;
+		if (m_CameraPosition.y < Vector3::Distance(m_CameraPosition, m_CameraLookAt) * 0.8f) {
+			direction.Cross(m_CameraUp, crossDirection);
+			direction.Cross(-crossDirection, crossDirection);
+			crossDirection.Normalize();
+			m_CameraPosition += crossDirection * 2.f;
+			m_CameraPosition += direction * 0.05f;
+		}
 	}
 	else if (GetAsyncKeyState(VK_DOWN)) {
-		direction.Normalize();
+		if (m_CameraPosition.y > 10.f) {
+			direction.Cross(m_CameraUp, crossDirection);
+			direction.Cross(-crossDirection, crossDirection);
+			crossDirection.Normalize();
+			m_CameraPosition -= crossDirection * 2.f;
+			m_CameraPosition += direction * 0.05f;
+		}
+	}
+	else if (GetAsyncKeyState(VK_CONTROL))
+	{
+		m_CameraPosition += direction;
+	}
+	else if (GetAsyncKeyState(VK_SHIFT))
+	{
 		m_CameraPosition -= direction;
 	}
 }
 
-void Camera::SetCameraPosition(Vector3 position) {
+void Camera::SetCameraPosition(const Vector3 &position) {
 	m_CameraPosition = XMVectorSet(position.x, position.y, position.z, 0.f);
 }
 
-void Camera::SetCameraLookAt(Vector3 lookat) {
+void Camera::SetCameraLookAt(const Vector3 &lookat) {
 	m_CameraLookAt = XMVectorSet(lookat.x, lookat.y, lookat.z, 0.f);
 }
 
-void Camera::SetCameraUp(Vector3 up) {
+void Camera::SetCameraUp(const Vector3 &up) {
 	m_CameraUp = XMVectorSet(up.x, up.y, up.z, 0.f);
 }
 
-XMMATRIX Camera::GetView() {
-	m_View = XMMatrixLookAtLH(m_CameraPosition, m_CameraLookAt, m_CameraUp);
-	return m_View;
+Vector3 Camera::GetPosition() const {
+	return m_CameraPosition;
 }
+
+Vector3 Camera::GetLookAt() const {
+	return m_CameraLookAt;
+}
+
+Vector3 Camera::GetUp() const {
+	return m_CameraUp;
+}
+//
+//XMMATRIX Camera::GetView() {
+//	m_View = XMMatrixLookAtLH(m_CameraPosition, m_CameraLookAt, m_CameraUp);
+//	return m_View;
+//}
 
 void Camera::Clear() {
 

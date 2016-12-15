@@ -1,4 +1,5 @@
 #pragma once
+#include "Table.h"
 #include "Ball.h"
 #include "Camera.h"
 
@@ -6,20 +7,10 @@ using namespace DirectX;
 using namespace SimpleMath;
 using Microsoft::WRL::ComPtr;
 
-__declspec(align(16)) class GameScene{
+class GameScene {
 public :
 	GameScene();
 	~GameScene() {}
-
-	void* operator new(size_t i)
-	{
-		return _mm_malloc(i, 16);
-	}
-
-	void operator delete(void* p)
-	{
-		_mm_free(p);
-	}
 
 	/* èâä˙âª */
 	void Initialize(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -38,18 +29,23 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>     m_d3dContext = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>		m_pBatchInputLayout = nullptr;
 
-	std::unique_ptr<CommonStates>					m_States = nullptr;
 	std::unique_ptr<BasicEffect>					m_BatchEffect = nullptr;
-	std::unique_ptr<PrimitiveBatch<VertexPositionColor>>	m_Batch = nullptr;
-	std::unique_ptr<Model>							m_Model = nullptr;
-	std::unique_ptr<EffectFactory>					m_FXFactory = nullptr;
+	//std::unique_ptr<PrimitiveBatch<VertexPositionColor>>	m_Batch = nullptr;
 	std::unique_ptr<SpriteBatch>					m_Sprites = nullptr;
-	//std::unique_ptr<SpriteFont>						m_Font = nullptr;
+	std::unique_ptr<SpriteFont>						m_Font = nullptr;
+	std::unique_ptr<GeometricPrimitive>				m_Shape = nullptr;
 
-	XMMATRIX										m_World;
-	XMMATRIX										m_View;
-	XMMATRIX										m_Projection;
+	//XMMATRIX										m_World;
+	//XMMATRIX										m_View;
+	//XMMATRIX										m_Projection;
 
-	std::unique_ptr<Ball>							m_Ball = nullptr;
-	std::unique_ptr<Camera>							m_Camera = nullptr;
+	Table											m_Table;
+	Ball											m_Ball;
+	Ball											*m_BallList = nullptr;
+	Camera											m_Camera;
+
+	Vector3 startpos[9] = { Vector3(0.f, 1.f, 25.f) ,Vector3(1.2f, 1.f, 27.2f) ,Vector3(-1.2f, 1.f, 27.2f) ,
+							Vector3(2.4f, 1.f, 29.4f) ,Vector3(-2.4f, 1.f, 29.4f) ,Vector3(1.2f, 1.f, 31.6f) ,
+							Vector3(-1.2f, 1.f, 31.6f) ,Vector3(0.f, 1.f, 33.8f) ,Vector3(0.f, 1.f, 29.4f) };
+
 };
