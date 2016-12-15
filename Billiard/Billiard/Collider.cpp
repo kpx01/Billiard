@@ -66,15 +66,6 @@ void Collider::Update(float elapsedTime)
 			m_velocity = m_velocity * impulseNormal * m_restitution;
 			m_velocity = calcVel(m_velocity, m_hitNormal - m_hitImpulseNormal);
 			m_hitImpulse = false;
-			/*
-			if (m_hitTime < elapsedTime) {
-			m_pos = m_velocity * m_hitTime;
-			float hitTime = elapsedTime - m_hitTime;
-			m_pos += m_velocity * hitTime;
-			}
-			else
-			m_pos += m_velocity * elapsedTime;
-			*/
 			if(!m_hitBall)
 				m_pos += m_velocity * elapsedTime;
 		}
@@ -92,11 +83,6 @@ void Collider::Update(float elapsedTime)
 	m_force = Vector3::Zero;
 	m_time += elapsedTime;
 	m_hitBall = false;
-/*
-	char str[100];
-	sprintf(str, "%f:%f:%f\n", m_velocity.x, m_velocity.y, m_velocity.z);
-	OutputDebugStringA(str);
-*/
 }
 
 void Collider::SetPosition(const Vector3 &position) {

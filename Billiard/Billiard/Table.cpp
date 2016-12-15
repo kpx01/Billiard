@@ -51,6 +51,7 @@ void Table::Clear() {
 
 }
 
+// ボールとテーブルの衝突判定(当たっている壁の法線ベクトルを渡す)
 void Table::CalcCollisionTable(
 	FLOAT r,
 	Vector3 *pPre_pos, Vector3 *pPos,
