@@ -30,14 +30,14 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>		m_pBatchInputLayout = nullptr;
 
 	std::unique_ptr<BasicEffect>					m_BatchEffect = nullptr;
-	//std::unique_ptr<PrimitiveBatch<VertexPositionColor>>	m_Batch = nullptr;
 	std::unique_ptr<SpriteBatch>					m_Sprites = nullptr;
 	std::unique_ptr<SpriteFont>						m_Font = nullptr;
 	std::unique_ptr<GeometricPrimitive>				m_Shape = nullptr;
 
-	//XMMATRIX										m_World;
-	//XMMATRIX										m_View;
-	//XMMATRIX										m_Projection;
+	char											m_Message[100];
+	bool											m_bBallFinished[9];
+	bool											m_bGameFinish;
+	float											m_FallBallTime;
 
 	Table											m_Table;
 	Ball											m_Ball;

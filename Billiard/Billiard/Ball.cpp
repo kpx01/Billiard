@@ -14,14 +14,15 @@ Ball::Ball(const int &id, const Vector3 &pos, const Vector3 &velocity, const flo
 }
 
 void Ball::Initialize() {
-	m_fallBall = false;
-	m_fallHoll = Vector3::Zero;
+	m_bFallBall = false;
+	m_vFallHoll = Vector3::Zero;
 }
 
 void Ball::Initialize(const Vector3 &pos) {
 	SetPosition(pos);
-	m_fallBall = false;
-	m_fallHoll = Vector3::Zero;
+	m_velocity = Vector3::Zero;
+	m_bFallBall = false;
+	m_vFallHoll = Vector3::Zero;
 }
 
 void Ball::Update(float elapsedTime)
@@ -37,7 +38,7 @@ void Ball::Render(GeometricPrimitive *m_Shape, XMMATRIX& m_World, XMMATRIX& m_Vi
 	XMMATRIX local = XMMatrixMultiply(m_World, XMMatrixTransformation(g_XMZero, qid, scale, g_XMZero, rotate, translate));
 	XMVECTOR color = Colors::White;
 	if (m_id == 0) color = Colors::White;
-	else if (m_id == 1) color = Colors::Yellow;
+	else if (m_id == 1) color = Colors::GreenYellow;
 	else if (m_id == 2) color = Colors::Blue;
 	else if (m_id == 3) color = Colors::Red;
 	else if (m_id == 4) color = Colors::Purple;
@@ -58,16 +59,22 @@ float Ball::GetRadius() const {
 	return m_radius;
 }
 
+bool Ball::GetFallBall() const {
+	return m_bFallBall;
+}
+
+// ボールとテーブルの衝突判定
 void Ball::CollisionTable(Table &table) {
 	m_hitNormal = Vector3::Zero;
 	m_hitImpulseNormal = Vector3::Zero;
 	bool hit = false;
 
-	table.CalcCollisionTable(m_radius, &m_prepos, &m_pos, &m_preHitNormal, &m_hitNormal, &m_hitImpulseNormal, &hit,  &m_hitImpulse, &m_hitTime, &m_hitPoint, &m_fallBall, &m_fallHoll);
+	table.CalcCollisionTable(m_radius, &m_prepos, &m_pos, &m_preHitNormal, &m_hitNormal, &m_hitImpulseNormal, &hit,  &m_hitImpulse, &m_hitTime, &m_hitPoint, &m_bFallBall, &m_vFallHoll);
 
 	m_hit = hit;
 }
 
+// ボール間の衝突判定
 void Ball::CollisionBall(Ball &ball) {
 	float stime = 0.01f;
 	float hittime = 1.f;

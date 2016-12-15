@@ -61,9 +61,9 @@ void Table::CalcCollisionTable(
 	bool *fallBall,
 	Vector3 *fallholl
 ) {
-	Vector3 holl[6] = { Vector3(27.f, 0.f, 51.5f),  Vector3(-27.f, 0.f, 51.5f),
-						Vector3(27.f, 0.f, 0.f),  Vector3(-27.f, 0.f, 0.f), 
-						Vector3(27.f, 0.f, -51.5f),  Vector3(-27.f, 0.f, -51.5f)};
+	Vector3 holl[6] = { Vector3(27.5f, 0.f, 51.5f),  Vector3(-27.5f, 0.f, 51.5f),
+						Vector3(27.5f, 0.f, 0.f),  Vector3(-27.f, 0.f, 0.f), 
+						Vector3(27.5f, 0.f, -51.5f),  Vector3(-27.5f, 0.f, -51.5f)};
 
 	Wall backWall[5] = { Wall(Vector3::Up, Vector3(0.f, -5.f, 0.f)),
 						 Wall(Vector3::Right, Vector3(-3.f, 0.f, 0.f)),
@@ -72,7 +72,7 @@ void Table::CalcCollisionTable(
 						 Wall(Vector3::Forward, Vector3(0.f, 0.f, 3.f))};
 
 	for (int i = 0; i < 6; i++) {
-		if (Vector3::Distance(*pPos, holl[i]) < 3.f) {
+		if (Vector3::Distance(*pPos, holl[i]) < 5.f) {
 			*fallBall = true;
 			*fallholl = holl[i];
 		}

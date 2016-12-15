@@ -17,10 +17,8 @@ void GameScene::Initialize(ComPtr<ID3D11Device> d3dDevice, ComPtr<ID3D11DeviceCo
 	m_d3dDevice = d3dDevice;
 	m_d3dContext = d3dContext;
 
-	//m_Ball = std::make_unique<Ball>();
-	//m_Camera = std::make_unique<Camera>();
+	sprintf(m_Message, "Press Space Button");
 
-	//m_Batch.reset(new PrimitiveBatch<VertexPositionColor>(m_d3dContext.Get()));
 	m_Sprites.reset(new SpriteBatch(m_d3dContext.Get()));
 	m_Font.reset(new SpriteFont(m_d3dDevice.Get(), L"italic.spritefont"));
 	m_BatchEffect.reset(new BasicEffect(m_d3dDevice.Get()));
@@ -38,9 +36,6 @@ void GameScene::Initialize(ComPtr<ID3D11Device> d3dDevice, ComPtr<ID3D11DeviceCo
 			&m_pBatchInputLayout);
 		DX::ThrowIfFailed(hr);
 	}
-
-	//m_World = XMMatrixIdentity();
-	//m_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV4, m_outputWidth / (FLOAT)m_outputHeight, 0.01f, 1000.0f);
 
 	m_BatchEffect->SetProjection(XMMatrixPerspectiveFovLH(XM_PIDIV4, m_outputWidth / (FLOAT)m_outputHeight, 0.01f, 1000.0f));
 
@@ -71,33 +66,30 @@ void GameScene::Update(float elapsedTime) {
 	direction.Cross(m_Camera.GetUp(), crossDirection);
 	crossDirection.Normalize();
 
-	if (GetAsyncKeyState('W')) {
-		m_Ball.AddForce(direction * 200.f);
-	}
-	if (GetAsyncKeyState('A')) {
-		m_Ball.AddForce(crossDirection * 200.f);
-	}
-	if (GetAsyncKeyState('S')) {
-		m_Ball.AddForce(direction * -200.f);
-	}
-	if (GetAsyncKeyState('D')) {
-		m_Ball.AddForce(crossDirection * -200.f);
-	}
+	// デバッグ用の入力WASDで上下左右に動く
+	if (GetAsyncKeyState('W')) 
+		m_Ball.AddForce(direction * 100.f);
+	if (GetAsyncKeyState('A')) 
+		m_Ball.AddForce(crossDirection * 100.f);
+	if (GetAsyncKeyState('S')) 
+		m_Ball.AddForce(direction * -100.f);
+	if (GetAsyncKeyState('D')) 
+		m_Ball.AddForce(crossDirection * -100.f);
 
+	// カメラの方向へ打つ
+	if (GetAsyncKeyState(VK_SPACE) && m_Ball.GetVelocity() == Vector3::Zero)
+		m_Ball.AddForce(direction * 7000.f);
+	// 初期位置に戻す
 	if (GetAsyncKeyState(VK_ESCAPE))
 		m_Ball.Initialize(Vector3(0.f, 1.f, -25.f));
 
-	if (GetAsyncKeyState(VK_SPACE) && m_Ball.GetVelocity() == Vector3::Zero) {
-		m_Ball.AddForce(direction * 5000.f);
-	}
-
+	// オブジェクトの更新, 衝突判定
 	m_Table.Update(elapsedTime);
 	m_Ball.Update(elapsedTime);
 
 	for (int i = 0; i < 9; i++) {
 		m_BallList[i].Update(elapsedTime);
 		m_BallList[i].CollisionTable(m_Table);
-
 		m_BallList[i].CollisionBall(m_Ball);
 		m_Ball.CollisionBall(m_BallList[i]);
 		for (int j = i; j < 9; j++) {
@@ -109,11 +101,33 @@ void GameScene::Update(float elapsedTime) {
 
 	m_Ball.CollisionTable(m_Table);
 	m_Camera.Update();
+
+	// 落ちたボールの判定,表示
+	if (m_Ball.GetFallBall()) {
+		m_FallBallTime += elapsedTime;
+		if (m_FallBallTime > 2.f) {
+			m_Ball.Initialize(Vector3(0.f, 1.f, -25.f));
+			m_FallBallTime = 0.f;
+		}
+	}
+
+	for (int i = 0; i < 9; i++) {
+		if (m_bBallFinished[i] || m_bGameFinish) continue;
+		m_bBallFinished[i] = m_BallList[i].GetFallBall();
+		if (m_BallList[i].GetFallBall()) {
+			if (i == 8) {
+				sprintf(m_Message, "Cup in No.%d\nFinished!!", i + 1);
+				m_bGameFinish = true;
+			}
+			else
+				sprintf(m_Message, "Cup in No.%d", i + 1);
+		}
+	}
+
 }
 
 void GameScene::Draw() {
 	m_Shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get(), 2.f, 16, false);
-	// TODO: Add your rendering code here.
 	m_Table.Render(m_d3dContext, XMMatrixIdentity(), XMMatrixLookAtLH(m_Camera.GetPosition(), m_Camera.GetLookAt(), m_Camera.GetUp()), XMMatrixPerspectiveFovLH(XM_PIDIV4, m_outputWidth / (FLOAT)m_outputHeight, 0.01f, 1000.0f));
 	m_Ball.Render(m_Shape.get(), XMMatrixIdentity(), XMMatrixLookAtLH(m_Camera.GetPosition(), m_Camera.GetLookAt(), m_Camera.GetUp()), XMMatrixPerspectiveFovLH(XM_PIDIV4, m_outputWidth / (FLOAT)m_outputHeight, 0.01f, 1000.0f));
 
@@ -121,19 +135,18 @@ void GameScene::Draw() {
 		m_BallList[i].Render(m_Shape.get(), XMMatrixIdentity(), XMMatrixLookAtLH(m_Camera.GetPosition(), m_Camera.GetLookAt(), m_Camera.GetUp()), XMMatrixPerspectiveFovLH(XM_PIDIV4, m_outputWidth / (FLOAT)m_outputHeight, 0.01f, 1000.0f));
 
 	m_Sprites->Begin(SpriteSortMode_Deferred);
-	m_Font->DrawString(m_Sprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(10, 10), Colors::Yellow);
+	wchar_t str[100];
+	mbstowcs(str, m_Message, 100);
+	m_Font->DrawString(m_Sprites.get(), str, XMFLOAT2(10, 10), Colors::White);
 	m_Sprites->End();
 }
 
 void GameScene::Unload() {
 	m_pBatchInputLayout.Reset();
-
 	m_Table.Clear();
 	m_Ball.Clear();
-
 	for (int i = 0; i < 9; i++)
 		m_BallList[i].Clear();
 	delete m_BallList;
-
 	m_Camera.Clear();
 }

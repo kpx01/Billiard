@@ -26,22 +26,22 @@ void Camera::Update() {
 	if (GetAsyncKeyState(VK_RIGHT)) {
 		direction.Cross(m_CameraUp, crossDirection);
 		crossDirection.Normalize();
-		m_CameraPosition -= crossDirection * 2.f;
-		m_CameraPosition += direction * 0.05f;
+		m_CameraPosition -= crossDirection * 0.5f;
+		m_CameraPosition += direction * 0.075f;
 	}
 	else if (GetAsyncKeyState(VK_LEFT)) {
 		direction.Cross(m_CameraUp, crossDirection);
 		crossDirection.Normalize();
-		m_CameraPosition += crossDirection * 2.f;
-		m_CameraPosition += direction * 0.05f;
+		m_CameraPosition += crossDirection * 0.5f;
+		m_CameraPosition += direction * 0.075f;
 	}
 	else if (GetAsyncKeyState(VK_UP)) {
 		if (m_CameraPosition.y < Vector3::Distance(m_CameraPosition, m_CameraLookAt) * 0.8f) {
 			direction.Cross(m_CameraUp, crossDirection);
 			direction.Cross(-crossDirection, crossDirection);
 			crossDirection.Normalize();
-			m_CameraPosition += crossDirection * 2.f;
-			m_CameraPosition += direction * 0.05f;
+			m_CameraPosition += crossDirection * 0.5f;
+			m_CameraPosition += direction * 0.075f;
 		}
 	}
 	else if (GetAsyncKeyState(VK_DOWN)) {
@@ -49,18 +49,15 @@ void Camera::Update() {
 			direction.Cross(m_CameraUp, crossDirection);
 			direction.Cross(-crossDirection, crossDirection);
 			crossDirection.Normalize();
-			m_CameraPosition -= crossDirection * 2.f;
-			m_CameraPosition += direction * 0.05f;
+			m_CameraPosition -= crossDirection * 0.5f;
+			m_CameraPosition += direction * 0.075f;
 		}
 	}
-	else if (GetAsyncKeyState(VK_CONTROL))
-	{
-		m_CameraPosition += direction;
-	}
-	else if (GetAsyncKeyState(VK_SHIFT))
-	{
-		m_CameraPosition -= direction;
-	}
+
+	if (Vector3::Distance(m_CameraPosition, m_CameraLookAt) >= 50.f)
+		m_CameraPosition += direction * 0.1f;
+	if (Vector3::Distance(m_CameraPosition, m_CameraLookAt) <= 50.f)
+		m_CameraPosition -= direction * 0.1f;
 }
 
 void Camera::SetCameraPosition(const Vector3 &position) {
@@ -86,11 +83,6 @@ Vector3 Camera::GetLookAt() const {
 Vector3 Camera::GetUp() const {
 	return m_CameraUp;
 }
-//
-//XMMATRIX Camera::GetView() {
-//	m_View = XMMatrixLookAtLH(m_CameraPosition, m_CameraLookAt, m_CameraUp);
-//	return m_View;
-//}
 
 void Camera::Clear() {
 

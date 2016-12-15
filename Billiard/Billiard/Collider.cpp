@@ -7,7 +7,7 @@ Collider::Collider(Vector3 pos, Vector3 velocity, float weight, float scale, boo
 	m_pos(pos),
 	m_velocity(velocity),
 	m_force(Vector3::Zero),
-	m_gravity(Vector3(0.f, -98.f, 0.f)),
+	m_gravity(Vector3(0.f, -10.f, 0.f)),
 	m_time(0.f),
 	m_scale(scale),
 	m_weight(weight),
@@ -34,7 +34,7 @@ void Collider::Update(float elapsedTime)
 		m_velocity = Vector3::Zero;
 	}
 	else {
-		m_velocity = m_velocity + (m_gravity - 0.9f * m_velocity + m_force * (1.f / m_weight)) * elapsedTime;
+		m_velocity = m_velocity + (m_gravity - 1.f * m_velocity + m_force * (1.f / m_weight)) * elapsedTime;
 	}
 
 	if (m_hitBall) {

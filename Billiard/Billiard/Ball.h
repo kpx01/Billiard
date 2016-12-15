@@ -19,6 +19,7 @@ public:
 	void Render(GeometricPrimitive*, XMMATRIX&, XMMATRIX&, XMMATRIX&);
 	void Clear();
 	float GetRadius() const;
+	bool GetFallBall() const;
 
 	void CollisionTable(Table&);
 	void CollisionBall(Ball&);
@@ -28,8 +29,8 @@ public:
 private:
 	int		m_id;
 	float	m_radius;
-	bool	m_fallBall;
-	Vector3 m_fallHoll;
+	bool	m_bFallBall;
+	Vector3 m_vFallHoll;
 
 	//std::unique_ptr<GeometricPrimitive>	m_Shape;
 };

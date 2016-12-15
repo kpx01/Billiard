@@ -11,7 +11,6 @@ public:
 	void SetCameraPosition(const Vector3&);
 	void SetCameraLookAt(const Vector3&);
 	void SetCameraUp(const Vector3&);
-	//XMMATRIX GetView();
 	Vector3 GetPosition() const;
 	Vector3 GetLookAt() const;
 	Vector3 GetUp() const;
@@ -22,6 +21,4 @@ private:
 	Vector3		m_CameraLookAt;
 	Vector3		m_CameraUp;
 	Vector3		distance = Vector3::Zero;
-
-	//XMMATRIX	m_View;
 };
